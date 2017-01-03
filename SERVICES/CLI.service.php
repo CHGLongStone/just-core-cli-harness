@@ -18,34 +18,69 @@ use JCORE\TRANSPORT\SOA\SERVICE_VALIDATOR as SERVICE_VALIDATOR;
  * @package JCORE\SERVICE\CRON 
 */
 class CLI_HARNESS{ 
-	/** 
+	/**
+	* serviceRequest
 	* 
+	* @access protected 
+	* @var string
 	*/
 	protected $serviceRequest = null;
-	/** 
+	/**
+	* logTable
 	* 
+	* @access protected 
+	* @var string
 	*/
 	protected $logTable = 'cron_log';
 	
-	/** 
+	/**
+	* error
 	* 
+	* @access public 
+	* @var string
 	*/
 	public $serviceResponse = null;
-	/** 
+	/**
+	* error
 	* 
+	* @access public 
+	* @var string
 	*/
 	public $error = null;
-	/** 
+	/**
+	* optionsDefault
 	* 
+	* @access public 
+	* @var string
 	*/
 	public $optionsDefault = "t:s:p:";
-	/** * */
+	/**
+	* options
+	* 
+	* @access public 
+	* @var string
+	*/
 	public $options = "t:s:p:";
-	/** * */
+	/**
+	* TYPE
+	* 
+	* @access public 
+	* @var string
+	*/
 	public $TYPE = "CRON";
-	/** * */
+	/**
+	* SUB_TYPE
+	* 
+	* @access public 
+	* @var string
+	*/
 	public $SUB_TYPE = "DAILY";
-	/** * */
+	/**
+	* JOBLIST
+	* 
+	* @access public 
+	* @var array
+	*/
 	public $JOBLIST = array();
 	
 	/**
@@ -54,8 +89,10 @@ class CLI_HARNESS{
 	* in the method property of the JSONRPC request in this format
 	* 		""method":"AJAX_STUB.aServiceMethod"
 	* 
-	* @param param 
-	* @return return  
+	* 
+	* @access public 
+	* @param string DSN
+	* @return null
 	*/
 	public function __construct($DSN=null){
 		if(null !== $DSN){
@@ -67,7 +104,14 @@ class CLI_HARNESS{
 		
 		return;
 	}
-	
+	/**
+	* initialize the harness
+	*
+	* 
+	* @access public 
+	* @param array args
+	* @return null
+	*/
 	public function init($args=null){
 		if (php_sapi_name() != "cli") {
 			#echo ' php_sapi_name['.php_sapi_name().']'.PHP_EOL;
@@ -102,10 +146,12 @@ class CLI_HARNESS{
 	}
 	
 	/**
-	* DESCRIPTOR: an example namespace call 
+	* DESCRIPTOR: lastJob
+	* lookup the last job
 	* 
-	* @params array 
-	* @return this->serviceResponse  
+	* @access public 
+	* @param array params
+	* @return null
 	*/
 	public function lastJob($params = null){
 		//$this->init($params);
@@ -134,10 +180,12 @@ class CLI_HARNESS{
 	}
 	
 	/**
-	* DESCRIPTOR: an example namespace call 
+	* DESCRIPTOR: logJob
+	* do the audit trail thing
 	* 
-	* @params array 
-	* @return this->serviceResponse  
+	* @access public 
+	* @param array params
+	* @return null
 	*/
 	public function logJob($params = null){
 		//$this->init($params);
@@ -177,10 +225,12 @@ class CLI_HARNESS{
 	}
 	
 	/**
-	* DESCRIPTOR: an example namespace call 
+	* DESCRIPTOR: updateLogJob
+	* mark the job as and when complete
 	* 
-	* @params array 
-	* @return this->serviceResponse  
+	* @access public 
+	* @param array params
+	* @return null
 	*/
 	public function updateLogJob($params = null){
 		//$this->init($params);
@@ -216,10 +266,12 @@ class CLI_HARNESS{
 	}
 	
 	/**
-	* DESCRIPTOR: an example namespace call 
+	* DESCRIPTOR: runJobs 
+	* look for a job list and run if not empty
 	* 
-	* @params array 
-	* @return this->serviceResponse  
+	* @access public 
+	* @param array params
+	* @return null
 	*/
 	public function runJobs($params = null){
 		$this->init($params);
@@ -329,68 +381,6 @@ class CLI_HARNESS{
 			$serviceResponse[] = $result;
 			
 		}
-		
-		
-		
-	}
-	
-	
-	/**
-	* DESCRIPTOR: an example namespace call 
-	* 
-	* @params array 
-	* @return this->serviceResponse  
-	*/
-	public function authenticate($params = null){
-		#echo __METHOD__.__LINE__.'$params<pre>['.var_export($params, true).']</pre>'.'<br>'; 
-		if(!isset($params["FILTER_TYPE"])){
-			return false;
-		}
-		switch(strtoupper($params["FILTER_TYPE"])){
-			case "WHITELIST":
-				$this->authenticateWHITELIST($params);
-				break;
-			case "BLACKLIST":
-				$this->authenticateBLACKLIST($params);
-				break;
-			case "TOKEN":
-				$this->authenticateTOKEN($params);
-				break;
-			default:
-				return false;
-				break;
-		}
-		#echo __METHOD__.__LINE__.'$this->serviceResponse<pre>['.var_export($this->serviceResponse, true).']</pre>'.'<br>'; 
-		if(isset($this->serviceResponse["status"]) && 'OK' == $this->serviceResponse["status"]){
-			return true;
-		}
-		return false;
-	}
-	
-	
-	
-	
-
-	/**
-	* DESCRIPTOR: an example namespace call 
-	* @param param 
-	* @return return  
-	*/
-	public function aServiceMethod($args){
-		#echo __METHOD__.__LINE__.'<br>';
-		#echo __METHOD__.__LINE__.'$args<pre>['.var_export($args, true).']</pre>'.'<br>'; 
-		if(!isset($args["action"])){
-			$this->error = new StdClass();
-			$this->error->code = "FAILED_CALL";
-			$this->error->message = ' NO SERVICE ACTION DEFINED';
-			$this->error->data = 'no service call made';
-			return false;
-		}
-
-		$this->serviceResponse = array();
-		$this->serviceResponse["title"] = 'Block Eight';
-		$this->serviceResponse["type"] = 'page';
-		return true;
 	}
 	
 }
