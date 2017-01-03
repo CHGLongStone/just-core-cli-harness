@@ -1,6 +1,6 @@
 {
 	"name" : "just-core/cli-harness",
-	"description" : "Authentication Page Plugin for the just-core eco system",
+	"description" : "command line harness for the just-core eco system",
 	"license" : "GNU",
 	"keywords" : [
 		"just-core",
