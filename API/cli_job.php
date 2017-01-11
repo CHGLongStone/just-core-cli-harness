@@ -29,9 +29,9 @@ if (file_exists('init.php')) {
 
 */
 $params = array(
-	
 );
-$CLI =  new JCORE\SERVICE\CRON\CLI_HARNESS('BLACKWATCH');
+$DSN = 'JCORE';
+$CLI =  new JCORE\SERVICE\CRON\CLI_HARNESS($DSN);
 $callResult = $CLI->runJobs($params);
 $serviceResponse[] = $callResult;
 
@@ -39,14 +39,5 @@ $serviceResponse[] = $callResult;
 
 echo __METHOD__.__LINE__.'$serviceResponse<pre>['.var_export($serviceResponse, true).']</pre>'.PHP_EOL; 
 
-
-
-#*/20 * * * * /usr/local/bin/php /var/www/vhosts/blackwatch_dev/APIS/CLI/cli_job.php -tCRON -sDAILY >> /var/www/vhosts/blackwatch_dev/APIS/CLI/cli_job.log 2>&1
-/*
-
-SERVICE\ADVERTISER\WEBSITE.getTheWalkingUnDUG
-*/
-
-		
 		
 ?>
