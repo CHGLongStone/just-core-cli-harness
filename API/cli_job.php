@@ -1,5 +1,7 @@
 <?php
-
+/**
+* Basic harness to ensure the script can only be loaded from the CLI
+*/
 if (php_sapi_name() != "cli") {
 	echo ' php_sapi_name['.php_sapi_name().']'.PHP_EOL;
 	exit('FaakUff');
