@@ -1,0 +1,1 @@
+crontab example: */20 * * * * [path to]/php [path to]/just-core/APIS/CLI/cli_job.php -tCRON -sDAILY >> [path to]/just-core/APIS/CLI/cli_job.log 2>&1
