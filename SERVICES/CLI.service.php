@@ -206,9 +206,7 @@ class CLI_HARNESS{
 			$params["service_call_params"] = json_encode($params["service_call_params"]);
 		}
 		#echo __METHOD__.__LINE__.'JSON ENCODE service_call_params['.$params["service_call_params"].']'.PHP_EOL; 
-		
 
-		
 		$query = "
 		INSERT INTO cron_log (
 			job_name, 
@@ -294,7 +292,8 @@ class CLI_HARNESS{
 			return false;
 		}
 		foreach($this->JOBLIST as $key => $value ){
-			echo __METHOD__.__LINE__.'$key['.$key.'] $value["JOB_NAME"]['.$value["JOB_NAME"].'] '.PHP_EOL; 
+			#echo __METHOD__.__LINE__.'$key['.$key.'] $value["JOB_NAME"]['.$value["JOB_NAME"].'] '.PHP_EOL; 
+			#echo __METHOD__.__LINE__.'$key['.$key.']<pre>['.var_export($value, true).']</pre>'.PHP_EOL; 
 			#echo __METHOD__.__LINE__.'$key['.$key.'] '.PHP_EOL; 
 			
 			$callResult = '';
