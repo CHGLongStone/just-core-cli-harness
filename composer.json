@@ -1,7 +1,7 @@
 {
 	"name" : "just-core/cli-harness",
 	"description" : "command line harness for the just-core eco system",
-	"license" : "GPL-3.0-or-later",
+	"license" : "GNU",
 	"keywords" : [
 		"just-core",
 		"Service Oriented Architechture",

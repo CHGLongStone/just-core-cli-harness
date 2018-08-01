@@ -276,142 +276,6 @@ class CLI_HARNESS{
 		
 		return $result;
 	}
-	/**
-	* DESCRIPTOR: getJobs 
-	* look for a job list and return if not empty
-	* 
-	* @access public 
-	* @param array params
-	* @return null
-	*/
-	public function getJobs($params = null){
-		$this->init($params);
-		if(0 == count($this->JOBLIST)){
-			$this->errors[__METHOD__][] = 'no job list ';
-			return false;
-		}
-		foreach($this->JOBLIST as $key => $value ){
-			#echo __METHOD__.__LINE__.'$key['.$key.'] $value["JOB_NAME"]['.$value["JOB_NAME"].'] '.PHP_EOL; 
-			#echo __METHOD__.__LINE__.'$key['.$key.']<pre>['.var_export($value, true).']</pre>'.PHP_EOL; 
-			#echo __METHOD__.__LINE__.'$key['.$key.'] '.PHP_EOL; 
-			
-			$callResult = '';
-			$result = array();
-			$errors = array();
-			
-
-			$mktimeArgs = array(
-				date("H"), # 'hour'  => 0
-				date("i"), # 'minute'   => 1
-				date("s"), # 'second'  => 2
-				date("n"), # 'month'  => 3
-				date("j"), # 'day'  => 4
-				date("Y"), # 'year'  => 5
-			);
-			$this->current_time = date("Y-m-d H:i:s");
-			$this->current_timestamp = mktime($mktimeArgs[0],$mktimeArgs[1],$mktimeArgs[2],$mktimeArgs[3],$mktimeArgs[4],$mktimeArgs[5]);
-			
-
-			switch($value["ITERATION_UNIT"]){
-				case"H": #hour
-					$mktimeArgs[0] = date("H")- $value["ITERATIONS"];
-					#echo ' date("H")['.date("H").'] $value["ITERATIONS"] ['.$value["ITERATIONS"].'] $mktimeArgs[0]['.$mktimeArgs[0].']'.PHP_EOL;
-					break;
-				case"i": #minute
-					$mktimeArgs[1] = date("i")- $value["ITERATIONS"];
-					#echo ' date("i")['.date("i").'] $value["ITERATIONS"] ['.$value["ITERATIONS"].'] $mktimeArgs[1]['.$mktimeArgs[1].']'.PHP_EOL;
-					break;
-				case"s": #second
-					$mktimeArgs[2] = date("s")- $value["ITERATIONS"];
-					break;
-				case"n": #month
-					$mktimeArgs[3] = date("n")- $value["ITERATIONS"];
-					break;
-				case"j": #day
-					$mktimeArgs[4] = date("j")- $value["ITERATIONS"];
-					break;
-				case"Y": #year
-					$mktimeArgs[5] = date("Y")- $value["ITERATIONS"];
-					break;
-				default:
-					break;
-			}
-
-			$this->last_run_check_time = date("Y-m-d H:i:s", mktime($mktimeArgs[0],$mktimeArgs[1],$mktimeArgs[2],$mktimeArgs[3],$mktimeArgs[4],$mktimeArgs[5]));
-			#echo __METHOD__.__LINE__.'this->last_run_check_time ['.$this->last_run_check_time.'] - $this->current_time ['.$this->current_time.']'.PHP_EOL; 
-			
-			
-			$lastJob = $this->lastJob($value);
-			#echo __METHOD__.'@'.__LINE__.' lastJob ['.$value["JOB_NAME"].']<pre>['.var_export($lastJob, true).']</pre> '.'<br>'.PHP_EOL;
-			if(isset($lastJob[0]["job_duration"]) && '' == $lastJob[0]["job_duration"]){
-				$errors[] = 'unfinished job';
-				#echo __METHOD__.'@'.__LINE__.'LAST JOB IS INCOMLETE lastJob<pre>['.var_export($lastJob, true).']</pre> '.'<br>'.PHP_EOL;
-			}
-			$logJobParams = array(
-				"service_call" => $value["SERVICE_CALL"],
-				"service_call_params" => $value["SERVICE_CALL_PARAMS"],
-				"job_name" => $value["JOB_NAME"],
-				"lastJob" => $lastJob[0],
-				"current_time" => $this->current_time,
-				"last_run_check_time" => $this->last_run_check_time,
-			);
-			
-
-			if(0 == count($lastJob)){
-				
-				
-				/**
-				#echo __METHOD__.'@'.__LINE__.'READY TO GO lastJob<pre>['.var_export($lastJob, true).']</pre> '.'<br>'.PHP_EOL;
-				$this->logJob($logJobParams);
-				
-				$serviceTest = SERVICE_VALIDATOR::validateServiceCall($value["SERVICE_CALL"]);
-				$serviceObject = new $serviceTest['object']();
-				$callResult = $serviceObject->$serviceTest['method']($value["SERVICE_CALL_PARAMS"]);;
-				if(!isset($callResult["data"])){
-					#echo __FILE__.__LINE__.' **** NO $callResult["data"] $value["SERVICE_CALL"]['.$value["SERVICE_CALL"].'] value["SERVICE_CALL_PARAMS"]<pre>['.var_export($value["SERVICE_CALL_PARAMS"], true).']</pre>'.PHP_EOL; 
-					$errors[] = 'no data from call';
-				}					
-					echo __FILE__.__LINE__.' **** NO $callResult["data"] value<pre>['.var_export($value, true).']</pre> callResult<pre>['.var_export($callResult, true).']</pre>'.PHP_EOL; 
-				$result["job_name"] = $value["JOB_NAME"];
-				$result["job_description"] = $value["JOB_DESCRIPTION"];
-				$result["service_call"] = $value["SERVICE_CALL"];
-				$result["service_call_params"] = $value["SERVICE_CALL_PARAMS"];
-				
-				$result["status"] = $callResult["status"];
-				$result["msg"] = $callResult["info"]["msg"];
-				#$result["data"] = $callResult["info"]["data"];
-				#$result["job_duration"] = $callResult["JOB_NAME"];
-				
-				$logJobParams["service_call_result_summary"] = $callResult["info"]["msg"];
-				$logJobParams["service_call_result_data"] = $callResult["data"];
-				
-				$this->updateLogJob($logJobParams);
-				#$result[] = $callResult;
-				*/
-			}elseif(count($lastJob) >1 ){
-				
-				$errors = 'Job jailed to log its last entry and exit points ';
-				/*
-				echo '************************multiple unfinished jobs********************************************';
-				
-				$this->logJob($logJobParams);
-				$logJobParams["service_call_result_summary"] = array('multiple unfinished jobs');
-				$logJobParams["service_call_result_data"] = $lastJob;
-				
-				$this->updateLogJob($logJobParams);
-				*/
-				
-			}
-			#exit;
-			$this->errors["errors"] = $errors;
-			$serviceResponse[$value["JOB_NAME"]] = $logJobParams;
-			
-			
-		}
-		
-		$serviceResponse["errors"] = $this->errors;
-		return $serviceResponse;
-	}	
 	
 	/**
 	* DESCRIPTOR: runJobs 
@@ -504,7 +368,7 @@ class CLI_HARNESS{
 					#echo __FILE__.__LINE__.' **** NO $callResult["data"] $value["SERVICE_CALL"]['.$value["SERVICE_CALL"].'] value["SERVICE_CALL_PARAMS"]<pre>['.var_export($value["SERVICE_CALL_PARAMS"], true).']</pre>'.PHP_EOL; 
 					$errors[] = 'no data from call';
 				}					
-					#echo __FILE__.__LINE__.' **** NO $callResult["data"] value<pre>['.var_export($value, true).']</pre> callResult<pre>['.var_export($callResult, true).']</pre>'.PHP_EOL; 
+					echo __FILE__.__LINE__.' **** NO $callResult["data"] value<pre>['.var_export($value, true).']</pre> callResult<pre>['.var_export($callResult, true).']</pre>'.PHP_EOL; 
 				/**
 				$result["job_name"] = $value["JOB_NAME"];
 				$result["job_description"] = $value["JOB_DESCRIPTION"];
@@ -528,12 +392,12 @@ class CLI_HARNESS{
 				/*
 				echo '************************multiple unfinished jobs********************************************';
 				
-				*/
 				$this->logJob($logJobParams);
 				$logJobParams["service_call_result_summary"] = array('multiple unfinished jobs');
 				$logJobParams["service_call_result_data"] = $lastJob;
 				
 				$this->updateLogJob($logJobParams);
+				*/
 				
 			}
 			#exit;
@@ -554,53 +418,31 @@ class CLI_HARNESS{
 	* @return null
 	*/
 	public function runJob($params = null){
-		echo __METHOD__.'@'.__LINE__.'params<pre>['.var_export($params, true).']</pre> '.'<br>'.PHP_EOL;
+		#echo __METHOD__.'@'.__LINE__.'params<pre>['.var_export($params, true).']</pre> '.'<br>'.PHP_EOL;
 		$this->init($params);
-		$this->current_time = date("Y-m-d H:i:s");
 		#echo __METHOD__.'@'.__LINE__.'this->JOBLIST<pre>['.var_export($this->JOBLIST, true).']</pre> '.'<br>'.PHP_EOL;
 		if(null !== $params && isset($this->JOBLIST[$params])){
-			echo __METHOD__.'@'.__LINE__.' SET DEFAULT'.'<br>'.PHP_EOL;
 			$value = array(
-				'SERVICE_CALL' => $this->JOBLIST[$params]["SERVICE_CALL"],
-				'SERVICE_CALL_PARAMS' => $this->JOBLIST[$params]["SERVICE_CALL_PARAMS"],
+				'SERVICE_CALL' => $this->JOBLIST["AV1_IP_SCAN"]["SERVICE_CALL"],
+				'SERVICE_CALL_PARAMS' => $this->JOBLIST["AV1_IP_SCAN"]["SERVICE_CALL_PARAMS"],
 			);
 		}
-		echo __METHOD__.'@'.__LINE__.'value<pre>['.var_export($value, true).']</pre> '.'<br>'.PHP_EOL;
+		#echo __METHOD__.'@'.__LINE__.'value<pre>['.var_export($value, true).']</pre> '.'<br>'.PHP_EOL;
 		#echo __METHOD__.'@'.__LINE__.'   $this->JOBLIST["AV1_IP_SCAN"]["SERVICE_CALL"]  ['.$this->JOBLIST["AV1_IP_SCAN"]["SERVICE_CALL"].']'.'<br>'.PHP_EOL;
-		echo __METHOD__.'@'.__LINE__.'   $this->JOBLIST["AV1_IP_SCAN"]["SERVICE_CALL_PARAMS"]  ['.var_export($this->JOBLIST["AV1_IP_SCAN"]["SERVICE_CALL_PARAMS"], true).']'.'<br>'.PHP_EOL;
+		#echo __METHOD__.'@'.__LINE__.'   $this->JOBLIST["AV1_IP_SCAN"]["SERVICE_CALL_PARAMS"]  ['.var_export($this->JOBLIST["AV1_IP_SCAN"]["SERVICE_CALL_PARAMS"], true).']'.'<br>'.PHP_EOL;
 		if(0 == count($this->JOBLIST)){
 			$this->errors[__METHOD__][] = 'no job list ';
 			return false;
 		}
-		
-		$logJobParams = array(
-			"service_call" => $value["SERVICE_CALL"],
-			"service_call_params" => $value["SERVICE_CALL_PARAMS"],
-			"job_name" => $params,
-		);
-		echo __METHOD__.'@'.__LINE__.'logJobParams<pre>['.var_export($logJobParams, true).']</pre> '.'<br>'.PHP_EOL;
-		#exit;
-		$this->logJob($logJobParams);
-		
-		$serviceTest = SERVICE_VALIDATOR::validateServiceCall($value["SERVICE_CALL"]);
-		$serviceObject = new $serviceTest['object']();
-		$callResult = $serviceObject->$serviceTest['method']($value["SERVICE_CALL_PARAMS"]);;
-		if(!isset($callResult["data"])){
-			#echo __FILE__.__LINE__.' **** NO $callResult["data"] $value["SERVICE_CALL"]['.$value["SERVICE_CALL"].'] value["SERVICE_CALL_PARAMS"]<pre>['.var_export($value["SERVICE_CALL_PARAMS"], true).']</pre>'.PHP_EOL; 
-			$this->errors[] = 'no data from call';
-		}	
-		$logJobParams["service_call_result_summary"] = $callResult["info"]["msg"];
-		$logJobParams["service_call_result_data"] = $callResult["data"];
-		
-		$this->updateLogJob($logJobParams);
-			
-		
-		$serviceResponse[$params] = $callResult;
-			
-			
-		
-		$serviceResponse["errors"] = $this->errors;
-		return $serviceResponse;
+
+				$serviceTest = SERVICE_VALIDATOR::validateServiceCall($value["SERVICE_CALL"]);
+				$serviceObject = new $serviceTest['object']();
+				$callResult = $serviceObject->$serviceTest['method']($value["SERVICE_CALL_PARAMS"]);;
+				if(!isset($callResult["data"])){
+					#echo __FILE__.__LINE__.' **** NO $callResult["data"] $value["SERVICE_CALL"]['.$value["SERVICE_CALL"].'] value["SERVICE_CALL_PARAMS"]<pre>['.var_export($value["SERVICE_CALL_PARAMS"], true).']</pre>'.PHP_EOL; 
+					$errors[] = 'no data from call';
+				}	
+	
 	}
 }
 
